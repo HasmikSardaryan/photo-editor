@@ -82,3 +82,30 @@ export const get_collection = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
+export const post_edit = async (req, res) => {
+  try {
+    const { photo } = req.body;
+    if (!photo) {
+      return res.status(400).json({ error: "Missing 'photo' in request body" });
+    }
+
+    const bufferData = Buffer.from(photo, 'base64'); // Convert base64 to Buffer
+
+    const updated = await Photo.findByIdAndUpdate(
+      req.params.id,
+      { data: bufferData },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ error: "Photo not found" });
+    }
+
+    res.json({ message: "Photo updated", photoId: updated._id });
+  } catch (err) {
+    console.error("Error updating photo:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};

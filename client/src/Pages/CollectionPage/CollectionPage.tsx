@@ -1,98 +1,219 @@
 import React, { useState, useEffect } from "react";
-import './Collection.css'
+import './Collection.css';
 
 function Collection() {
-    const [photos, setPhotos] = useState([]);
+  const [photos, setPhotos] = useState([]);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [applyBW, setApplyBW] = useState(false);
 
-    useEffect(() => {
-      const fetchPhotos = async () => {
-        try {
-          const response = await fetch('http://localhost:3000/collection', {
-            method: 'GET',
-            credentials: 'include',
-          });
-          const data = await response.json();
-          if (response.ok) {
-            setPhotos(data.photos);
-          } else {
-            alert(data.error || "Failed to load photos");
-          }
-        } catch (err) {
-          alert("Error fetching photos");
+  useEffect(() => {
+    const fetchPhotos = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/collection', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setPhotos(data.photos);
+        } else {
+          alert(data.error || "Failed to load photos");
         }
-      };
-
-      fetchPhotos();
-    }, []);
-
-    const handleAdding = async (file) => {
-        const reader = new FileReader();
-      
-        reader.onloadend = async () => {
-          const result = reader.result;
-      
-          if (typeof result !== "string") {
-            alert("Failed to read file.");
-            return;
-          }
-      
-          const base64 = result.split(',')[1];
-          if (!base64) {
-            alert("Invalid file format.");
-            return;
-          }
-      
-          try {
-            const response = await fetch('http://localhost:3000/collection', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              credentials: 'include',
-              body: JSON.stringify({ photo: base64 }),
-            });
-      
-            const data = await response.json();
-      
-            if (response.ok) {
-              alert('Photo added to collection');
-              setPhotos(prev => [...prev, { base64, contentType: 'image/jpeg' }]); // add to UI
-            } else {
-              alert(data.error || 'Failed to add photo');
-            }
-          } catch (err) {
-            alert('Error connecting to server');
-          }
-        };
-      
-        reader.onerror = () => {
-          alert("Error reading file.");
-        };
-      
-        reader.readAsDataURL(file);
+      } catch (err) {
+        alert("Error fetching photos");
+      }
     };
-      
-    return (
-        <>
-          <div>add collection</div>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => handleAdding(e.target.files[0])}
-          />
-      
-          <div className="collection-container">
-            <div className="collection-grid">
-              {photos.map((photo, idx) => (
-                <img
-                  key={idx}
-                  src={`data:${photo.contentType};base64,${photo.base64}`}
-                  alt={`Uploaded ${idx}`}
-                  className="collection-image"
-                />
-              ))}
+
+    fetchPhotos();
+  }, []);
+
+  const handleAdding = (file) => {
+    const reader = new FileReader();
+
+    reader.onloadend = async () => {
+      const result = reader.result;
+      if (typeof result !== "string") {
+        alert("Could not read image file.");
+        return;
+      }
+
+      const base64 = result.split(',')[1];
+      if (!base64) {
+        alert("Image format is invalid.");
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:3000/collection', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ photo: base64 }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert('Photo added to collection');
+          setPhotos((prev) => [...prev, { ...data.photo }]); // ensure backend returns { photo: { ... } }
+        } else {
+          alert(data.error || 'Failed to add photo');
+        }
+      } catch (err) {
+        alert('Error connecting to server');
+      }
+    };
+
+    reader.onerror = () => {
+      alert("Error reading file.");
+    };
+
+    reader.readAsDataURL(file);
+  };
+
+  const openEditor = (idx) => {
+    setEditingIndex(idx);
+    setApplyBW(false);
+  };
+
+  const handleSave = async () => {
+    if (editingIndex === null) return;
+
+    const original = photos[editingIndex];
+
+    if (!applyBW) {
+      setEditingIndex(null);
+      return;
+    }
+
+    const newBase64 = await convertToGrayscale(original.base64);
+
+    try {
+      const response = await fetch(`http://localhost:3000/photo/${original._id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ photo: newBase64 }),
+      });
+
+      if (!response.ok) throw new Error("Failed to save edit");
+
+      const updatedPhotos = [...photos];
+      updatedPhotos[editingIndex] = {
+        ...original,
+        base64: newBase64,
+        bw: true,
+      };
+      setPhotos(updatedPhotos);
+      setEditingIndex(null);
+    } catch (err) {
+      alert("Failed to save edited image");
+    }
+  };
+
+  const handleCancel = () => {
+    setEditingIndex(null);
+  };
+
+  const convertToGrayscale = (base64) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          alert("Canvas 2D context not supported");
+          resolve(base64);
+          return;
+        }
+  
+        canvas.width = img.width;
+        canvas.height = img.height;
+  
+        ctx.drawImage(img, 0, 0);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+  
+        for (let i = 0; i < data.length; i += 4) {
+          const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+          data[i] = data[i + 1] = data[i + 2] = avg;
+        }
+  
+        ctx.putImageData(imageData, 0, 0);
+        const base64Edited = canvas.toDataURL("image/jpeg").split(',')[1];
+        resolve(base64Edited);
+      };
+  
+      img.onerror = () => {
+        alert("Failed to load image for editing.");
+        resolve(base64);
+      };
+  
+      img.src = `data:image/jpeg;base64,${base64}`;
+    });
+  };
+  
+
+  return (
+    <>
+      <div>add collection</div>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => {
+          if (e.target.files.length > 0) {
+            handleAdding(e.target.files[0]);
+          }
+        }}
+      />
+
+      <div className="collection-container">
+        <div className="collection-grid">
+          {photos.map((photo, idx) => (
+            photo.base64 && (
+              <img
+                key={photo._id || idx}
+                src={`data:${photo.contentType};base64,${photo.base64}`}
+                alt={`Uploaded ${idx}`}
+                className="collection-image"
+                onClick={() => openEditor(idx)}
+                style={{
+                  filter: photo.bw ? "grayscale(100%)" : "none",
+                  cursor: "pointer"
+                }}
+              />
+            )
+          ))}
+        </div>
+      </div>
+
+      {editingIndex !== null && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Edit Photo</h3>
+            <img
+              src={`data:${photos[editingIndex].contentType};base64,${photos[editingIndex].base64}`}
+              alt="Editing"
+              style={{ maxHeight: 300, filter: applyBW ? "grayscale(100%)" : "none" }}
+            />
+            <div style={{ marginTop: 10 }}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={applyBW}
+                  onChange={() => setApplyBW(!applyBW)}
+                /> Apply Black & White
+              </label>
+            </div>
+            <div style={{ marginTop: 15 }}>
+              <button onClick={handleSave} style={{ marginRight: 10 }}>Save</button>
+              <button onClick={handleCancel}>Cancel</button>
             </div>
           </div>
-        </>
-    );
+        </div>
+      )}
+    </>
+  );
 }
 
 export default Collection;

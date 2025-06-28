@@ -11,7 +11,6 @@ export default function Logout() {
                     method: 'POST',
                     credentials: 'include',
                 });
-
                 if (response.ok) {
                     localStorage.removeItem('token');
                     navigate('/');

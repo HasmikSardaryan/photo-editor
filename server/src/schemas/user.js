@@ -3,21 +3,20 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    
     trim: true,
   },
   password: {
-    require: true,
     type: String,
+    required: true,
   },
   status: {
     type: String,
-    enum: ['invited', 'active'], 
-    default: 'invited'
+    enum: ['invited', 'pending', 'active'], 
+    default: 'pending' 
   },
   email: { 
     type: String,
-    require: true,
+    required: true,
     lowercase: true, 
     trim: true 
   },
@@ -25,19 +24,16 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Photo'
   }],  
-  inviteToken: {
-    type: String,
-  },
-  inviteTokenExpires: {   
-    type: Date,
-  },
-  resetToken: {
-    type: String,
-  },
-  resetTokenExpires: {   
-    type: Date,
-  }
+  inviteToken: String,
+  inviteTokenExpires: Date,
+
+  verificationCode: String,
+  codeExpires: Date,
+
+  resetToken: String,
+  resetTokenExpires: Date
 });
+
 
 const User = mongoose.model("User", userSchema);
 export default User;
