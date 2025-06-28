@@ -1,0 +1,16 @@
+.collection-container {
+    margin-top: 20px;
+  }
+  
+  .collection-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  
+  .collection-image {
+    width: 200px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  

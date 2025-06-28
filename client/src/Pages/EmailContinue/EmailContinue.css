@@ -1,0 +1,76 @@
+.email-continue-container {
+  max-width: 480px;
+  margin: 80px auto;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 0 24px;
+}
+
+.email-continue-container h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 50px;
+}
+
+.email-continue-container .description {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.email-continue-container .input-label {
+  font-size: 0.85rem;
+  color: #777;
+  display: block;
+  margin-bottom: 4px; /* reduced from 6px for closer label/input */
+}
+
+.email-continue-container input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 12px;
+  background: #eee;
+  margin-bottom: 20px; /* reduced from 32px for closer inputs */
+  box-sizing: border-box;
+}
+
+.email-continue-container input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #c43ccc55;
+}
+
+.email-continue-container .button-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.email-continue-container .back-button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #c43ccc;
+  background: transparent;
+  color: #c43ccc;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.email-continue-container .continue-button {
+  flex: 1;
+  height: 48px;
+  background: #c43ccc;
+  color: white;
+  font-size: 1rem;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.email-continue-container .continue-button:hover {
+  background: #aa30aa;
+}
