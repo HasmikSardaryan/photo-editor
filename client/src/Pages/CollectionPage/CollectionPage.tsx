@@ -7,25 +7,30 @@ function Collection() {
   const [applyBW, setApplyBW] = useState(false);
 
   useEffect(() => {
-    const fetchPhotos = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/collection', {
-          method: 'GET',
-          credentials: 'include',
-        });
-        const data = await response.json();
-        if (response.ok) {
-          setPhotos(data.photos);
-        } else {
-          alert(data.error || "Failed to load photos");
-        }
-      } catch (err) {
-        alert("Error fetching photos");
-      }
-    };
-
     fetchPhotos();
   }, []);
+
+  const fetchPhotos = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/collection', {
+        method: 'GET',
+        credentials: 'include',
+      });
+      const data = await response.json();
+      if (response.ok) {
+        const sortedPhotos = data.photos.sort((a, b) => {
+          const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return dateB - dateA;
+        });
+        setPhotos(sortedPhotos);
+      } else {
+        alert(data.error || "Failed to load photos");
+      }
+    } catch (err) {
+      alert("Error fetching photos");
+    }
+  };
 
   const handleAdding = (file) => {
     const reader = new FileReader();
@@ -44,7 +49,7 @@ function Collection() {
       }
 
       try {
-        const response = await fetch('http://localhost:3000/collection', {
+        const response = await fetch('http://localhost:3000/photo', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
@@ -55,7 +60,7 @@ function Collection() {
 
         if (response.ok) {
           alert('Photo added to collection');
-          setPhotos((prev) => [...prev, { ...data.photo }]); // ensure backend returns { photo: { ... } }
+          await fetchPhotos();
         } else {
           alert(data.error || 'Failed to add photo');
         }
@@ -126,46 +131,47 @@ function Collection() {
           resolve(base64);
           return;
         }
-  
+
         canvas.width = img.width;
         canvas.height = img.height;
-  
+
         ctx.drawImage(img, 0, 0);
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const data = imageData.data;
-  
+
         for (let i = 0; i < data.length; i += 4) {
           const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
           data[i] = data[i + 1] = data[i + 2] = avg;
         }
-  
+
         ctx.putImageData(imageData, 0, 0);
         const base64Edited = canvas.toDataURL("image/jpeg").split(',')[1];
         resolve(base64Edited);
       };
-  
+
       img.onerror = () => {
         alert("Failed to load image for editing.");
         resolve(base64);
       };
-  
+
       img.src = `data:image/jpeg;base64,${base64}`;
     });
   };
-  
 
   return (
     <>
-      <div>add collection</div>
       <input
         type="file"
+        id="file-upload"
         accept="image/*"
+        style={{ display: "none" }}
         onChange={(e) => {
           if (e.target.files.length > 0) {
             handleAdding(e.target.files[0]);
           }
         }}
       />
+      <label htmlFor="file-upload" className="add-collection-btn">+</label>
 
       <div className="collection-container">
         <div className="collection-grid">

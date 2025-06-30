@@ -19,10 +19,10 @@ function EmailContinue() {
       setError("Please enter your password.");
       return;
     }
-
+  
     setError(null);
     setLoading(true);
-
+  
     try {
       const response = await fetch('http://localhost:3000/login', {
         method: 'POST',
@@ -40,12 +40,15 @@ function EmailContinue() {
         alert('Logged in successfully');
         navigate('/');
       } else {
-        alert(data.error || 'Invalid credentials');
+        setError("Wrong username or password."); 
+        setLoading(false); 
       }
     } catch (err) {
-      alert('Error connecting to server');
+      setError("Error connecting to server."); 
+      setLoading(false);
     }
   };
+  
 
   return (
     <div className="email-continue-container">

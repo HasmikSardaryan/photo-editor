@@ -29,35 +29,42 @@ export const get_user = async (req, res) => {
 };
 
 
-export const add_collection = async (req, res) => {
-    try {
-      const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
-      if (!token) return res.status(401).json({ error: "No token provided" });
-  
-      const decoded = jwt.verify(token, JWT_SECRET);
+export const add_photo = async (req, res) => {
+  try {
+    const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ error: "No token provided" });
 
-      const user = await User.findById(decoded.id);
-      if (!user) return res.status(404).json({ error: "User not found" });
-  
-      const { photo } = req.body;
-      if (!photo) return res.status(400).json({ error: "No photo provided" });
-  
-      const newPhoto = new Photo({
-        data: Buffer.from(photo, 'base64'), 
-        contentType: 'image/jpeg'
-      });
-  
-      await newPhoto.save();
-  
-      user.photos.push(newPhoto._id);
-      await user.save();
-  
-      res.status(200).json({ message: "Photo added to collection" });
-  
-    } catch (error) {
-      console.error("Error in add_coll:", error);
-      res.status(500).json({ error: "Internal Server Error" });
-    }
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    const { photo } = req.body;
+    if (!photo) return res.status(400).json({ error: "No photo provided" });
+
+    const newPhoto = new Photo({
+      data: Buffer.from(photo, 'base64'),
+      contentType: 'image/jpeg',
+    });
+
+    await newPhoto.save();
+
+    user.photos.push(newPhoto._id);
+    await user.save();
+
+    res.status(200).json({
+      message: "Photo added to collection",
+      photo: {
+        _id: newPhoto._id,
+        base64: newPhoto.data.toString('base64'),
+        contentType: newPhoto.contentType,
+        createdAt: newPhoto.createdAt
+      }
+    });
+
+  } catch (error) {
+    console.error("Error in add_photo:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 export const get_collection = async (req, res) => {
@@ -67,13 +74,18 @@ export const get_collection = async (req, res) => {
 
     const decoded = jwt.verify(token, JWT_SECRET);
 
-    const user = await User.findById(decoded.id).populate('photos');
+    const user = await User.findById(decoded.id).populate({
+      path: 'photos',
+      options: { sort: { createdAt: -1 } } 
+    });
     if (!user) return res.status(404).json({ error: "User not found" });
 
     const photos = user.photos.map(photo => ({
       _id: photo._id,
       contentType: photo.contentType,
       base64: photo.data.toString('base64'),
+      createdAt: photo.createdAt,
+      updatedAt: photo.updatedAt,
     }));
 
     res.status(200).json({ photos });

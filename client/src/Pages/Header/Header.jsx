@@ -1,9 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation} from 'react-router-dom';
 import useAuthContext from "../../hooks/useAuthContext";
 import './Header.css';
 
 function Header() {
+
+  const location = useLocation();
+  const isProfilePage = location.pathname === '/profile';
+
   const { user, isLoading } = useAuthContext();
 
   if (isLoading) {
@@ -13,9 +17,9 @@ function Header() {
     <header className="app-header">
       <div className="logo">📸 PhotoEditor</div>
       <nav className="nav-links">
-        <Link to="/">Home</Link>
         {user ? <Link to="/logout"> Logout</Link> : <Link to="/login"> Login</Link>}
-        {user && <Link to="/profile">Profile</Link>}
+        {user && !isProfilePage && <Link to="/profile">Profile</Link>}
+        {isProfilePage && <Link to="/">Home</Link>}
         {!user && <Link to="/register">Register</Link>}
       </nav>
     </header>

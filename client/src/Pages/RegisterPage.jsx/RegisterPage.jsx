@@ -1,15 +1,17 @@
 import React, { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import './RegisterPage.css';
 
 export default function Register() {
   const [step, setStep] = useState(1); 
-
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
   const [code, setCode] = useState('');
   const [message, setMessage] = useState('');
+
+  const navigate = useNavigate();
 
   const handleRegister = async () => {
     setMessage('');
@@ -26,14 +28,13 @@ export default function Register() {
         setMessage('Verification code sent! Check your email.');
         setStep(2);
       } else {
-        setMessage(data.error || 'Something went wrong');
+        setMessage('Invalid username or email');
       }
     } catch (err) {
       setMessage('Error connecting to server');
     }
   };
 
-  // Handle verification submit
   const handleVerify = async () => {
     setMessage('');
     try {
@@ -47,6 +48,9 @@ export default function Register() {
 
       if (response.ok) {
         setMessage('Account verified successfully! You can now log in.');
+        setTimeout(() => {
+          navigate('/login');
+        }, 1000);
       } else {
         setMessage(data.error || 'Verification failed');
       }

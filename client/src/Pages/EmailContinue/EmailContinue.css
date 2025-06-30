@@ -23,7 +23,7 @@
   font-size: 0.85rem;
   color: #777;
   display: block;
-  margin-bottom: 4px; /* reduced from 6px for closer label/input */
+  margin-bottom: 4px; 
 }
 
 .email-continue-container input {
@@ -33,7 +33,7 @@
   border: none;
   border-radius: 12px;
   background: #eee;
-  margin-bottom: 20px; /* reduced from 32px for closer inputs */
+  margin-bottom: 20px; 
   box-sizing: border-box;
 }
 
