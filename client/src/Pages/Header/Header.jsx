@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation} from 'react-router-dom';
 import useAuthContext from "../../hooks/useAuthContext";
-import './Header.css';
+import './header.css';
 
 function Header() {
 
