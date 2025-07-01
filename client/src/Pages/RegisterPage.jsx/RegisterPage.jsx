@@ -19,6 +19,7 @@ export default function Register() {
   const handleRegister = async () => {
     setMessage('');
     try {
+      console.log(BASE_URL);
       const response = await fetch(`${BASE_URL}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
