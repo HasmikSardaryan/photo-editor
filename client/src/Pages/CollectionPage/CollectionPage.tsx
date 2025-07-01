@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import './Collection.css';
 
 function Collection() {
+
+  const BASE_URL = process.env.REACT_APP_API_URL;
+
   const [photos, setPhotos] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
   const [applyBW, setApplyBW] = useState(false);
@@ -12,7 +15,7 @@ function Collection() {
 
   const fetchPhotos = async () => {
     try {
-      const response = await fetch('http://localhost:3000/collection', {
+      const response = await fetch(`${BASE_URL}/collection`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -49,7 +52,7 @@ function Collection() {
       }
 
       try {
-        const response = await fetch('http://localhost:3000/photo', {
+        const response = await fetch(`${BASE_URL}/photo`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
@@ -94,7 +97,7 @@ function Collection() {
     const newBase64 = await convertToGrayscale(original.base64);
 
     try {
-      const response = await fetch(`photo-editor-haas.onrender.com/photo/${original._id}`, {
+      const response = await fetch(`${BASE_URL}/${original._id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

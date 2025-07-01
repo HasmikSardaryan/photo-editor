@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Logout() {
     const navigate = useNavigate();
+    const BASE_URL = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         const handleLogout = async () => {
             try {
-                const response = await fetch('photo-editor-haas.onrender.com0/logout', {
+                const response = await fetch(`${BASE_URL}/logout`, {
                     method: 'POST',
                     credentials: 'include',
                 });

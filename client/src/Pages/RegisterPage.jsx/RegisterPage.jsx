@@ -8,6 +8,8 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
+  const BASE_URL = process.env.REACT_APP_API_URL;
+  
   const [code, setCode] = useState('');
   const [message, setMessage] = useState('');
 
@@ -16,7 +18,7 @@ export default function Register() {
   const handleRegister = async () => {
     setMessage('');
     try {
-      const response = await fetch('photo-editor-haas.onrender.com/register', {
+      const response = await fetch(`${BASE_URL}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password }),
@@ -38,7 +40,7 @@ export default function Register() {
   const handleVerify = async () => {
     setMessage('');
     try {
-      const response = await fetch('photo-editor-haas.onrender.com/verify', {
+      const response = await fetch(`${BASE_URL}/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, code }),

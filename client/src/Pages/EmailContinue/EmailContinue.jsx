@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import './EmailContinue.css';
 
 function EmailContinue() {
+
+  const BASE_URL = process.env.REACT_APP_API_URL;
+
   const [input, setInput] = useState(''); 
   const [password, setPassword] = useState(''); 
   const [loading, setLoading] = useState(false);
@@ -24,7 +27,7 @@ function EmailContinue() {
     setLoading(true);
   
     try {
-      const response = await fetch('photo-editor-haas.onrender.com/login', {
+      const response = await fetch(`${BASE_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

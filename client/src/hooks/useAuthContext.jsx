@@ -1,12 +1,14 @@
 import { useState, useEffect, useMemo } from 'react';
 
 const useAuthContext = () => {
+    const BASE_URL = process.env.REACT_APP_API_URL;
+
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     useEffect(() => {
         const checkUserAuthentication = async () => {
             try {
-                const response = await fetch('photo-editor-haas.onrender.com/get_user', {
+                const response = await fetch(`${BASE_URL}/get_user`, {
                     credentials: 'include',
                 });
                 const data = await response.json();

@@ -6,10 +6,12 @@ import "./ProfilePage.css";
 function ProfilePage() {
   const [user, setUser] = useState(null);
 
+  const BASE_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("photo-editor-haas.onrender.com/get_user", {
+        const response = await fetch(`${BASE_URL}/get_user`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
