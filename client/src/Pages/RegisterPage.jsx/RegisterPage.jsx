@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import './RegisterPage.css';
+import { log } from "console";
 
 export default function Register() {
   const [step, setStep] = useState(1); 
@@ -18,7 +19,7 @@ export default function Register() {
   const handleRegister = async () => {
     setMessage('');
     try {
-      const response = await fetch(`${BASE_URL}/register`, {
+      const response = await fetch(`/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password }),
