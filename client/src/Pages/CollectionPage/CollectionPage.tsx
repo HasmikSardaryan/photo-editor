@@ -94,7 +94,7 @@ function Collection() {
     const newBase64 = await convertToGrayscale(original.base64);
 
     try {
-      const response = await fetch(`http://localhost:3000/photo/${original._id}`, {
+      const response = await fetch(`photo-editor-haas.onrender.com/photo/${original._id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
