@@ -7,7 +7,7 @@ const useUser = (userId) => {
   useEffect(() => {
     if (!userId) return;
 
-    fetch(`http://localhost:3000/user/${userId}`)
+    fetch(`http://photo-editor-haas.onrender.com/user/${userId}`)
       .then((res) => res.json())
       .then((data) => {
         setUser(data);

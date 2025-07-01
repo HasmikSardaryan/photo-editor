@@ -16,7 +16,7 @@ export default function Register() {
   const handleRegister = async () => {
     setMessage('');
     try {
-      const response = await fetch('http://localhost:3000/register', {
+      const response = await fetch('photo-editor-haas.onrender.com/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password }),
@@ -38,7 +38,7 @@ export default function Register() {
   const handleVerify = async () => {
     setMessage('');
     try {
-      const response = await fetch('http://localhost:3000/verify', {
+      const response = await fetch('photo-editor-haas.onrender.com/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, code }),

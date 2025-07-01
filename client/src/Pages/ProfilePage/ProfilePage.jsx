@@ -9,7 +9,7 @@ function ProfilePage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("http://localhost:3000/get_user", {
+        const response = await fetch("photo-editor-haas.onrender.com/get_user", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
