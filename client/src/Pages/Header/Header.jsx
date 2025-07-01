@@ -17,6 +17,7 @@ function Header() {
     <header className="app-header">
       <div className="logo">📸 PhotoEditor</div>
       <nav className="nav-links">
+        {console.log(user)}
         {user ? <Link to="/logout"> Logout</Link> : <Link to="/login"> Login</Link>}
         {user && !isProfilePage && <Link to="/profile">Profile</Link>}
         {isProfilePage && <Link to="/">Home</Link>}

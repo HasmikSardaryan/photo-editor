@@ -1,5 +1,3 @@
-
-
 .gallery-title {
   text-align: center;
   font-size: 1.6rem;
@@ -7,23 +5,29 @@
   color: #333;
 }
 
-.image-gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 16px;
-  padding: 20px;
-}
-
-.image-gallery img {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-  /* border-radius: 12px; */
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, filter 0.3s;
-}
-
 .image-gallery img:hover {
   transform: scale(1.03);
   filter: brightness(1.05) saturate(1.2);
 }
+
+.start-now-button {
+  padding: 16px 40px;
+  font-size: 1.5rem;
+  background-color: #aa6ec2;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.start-now-button:hover {
+  background-color: #8e44ad;
+}
+
+.start-now-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+

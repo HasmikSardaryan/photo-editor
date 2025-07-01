@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../Header/Header";
 import "./HomePage.css";
 
 function HomePage() {
   const [images, setImages] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsplashImages = Array.from({ length: 12 }, (_, i) =>
@@ -12,14 +14,19 @@ function HomePage() {
     setImages(unsplashImages);
   }, []);
 
+  const handleStartNow = () => {
+    const isLoggedIn = localStorage.getItem("token"); 
+    navigate(isLoggedIn ? "/profile" : "/login");
+  };
+
   return (
     <div className="homepage">
-      <Header/>
+      <Header />
       <h2 className="gallery-title">Explore Edited Photos</h2>
-      <div className="image-gallery">
-        {images.map((img, idx) => (
-          <img key={idx} src={img} alt={`Edited sample ${idx}`} />
-        ))}
+      <div className="start-now-container">
+        <button className="start-now-button" onClick={handleStartNow}>
+          Start Now
+        </button>
       </div>
     </div>
   );

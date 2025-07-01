@@ -6,7 +6,7 @@ const useAuthContext = () => {
     useEffect(() => {
         const checkUserAuthentication = async () => {
             try {
-                const response = await fetch('http://localhost:3000/', {
+                const response = await fetch('http://localhost:3000/get_user', {
                     credentials: 'include',
                 });
                 const data = await response.json();
