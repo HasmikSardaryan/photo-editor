@@ -7,7 +7,7 @@ export default function Logout() {
     useEffect(() => {
         const handleLogout = async () => {
             try {
-                const response = await fetch('http://localhost:3000/logout', {
+                const response = await fetch('photo-editor-haas.onrender.com0/logout', {
                     method: 'POST',
                     credentials: 'include',
                 });

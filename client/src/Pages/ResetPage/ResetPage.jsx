@@ -7,7 +7,7 @@ export default function Reset() {
   
     const handleResetRequest = async () => {
       try {
-        const response = await fetch('http://localhost:3000/reset', {
+        const response = await fetch('photo-editor-haas.onrender.com/reset', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username }),
